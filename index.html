@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#121821">
+<title>Gift Card Vault — Enhanced</title>
+<style>
+:root{--bg:#121821;--panel:#1b2430;--panel2:#222d3b;--text:#f7f1e3;--muted:#9aa3b2;--gold:#d4ae35;--gold2:#f0d477;--green:#49a16d;--red:#e0655a;--blue:#6fa8dc;--paper:#faf5e8;--ink:#18212c;--line:rgba(255,255,255,.1);--shadow:0 10px 30px rgba(0,0,0,.25)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 15% 5%,rgba(212,174,53,.09),transparent 32%),radial-gradient(circle at 90% 80%,rgba(73,161,109,.08),transparent 35%),var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh;padding:22px 14px 70px}.wrap{max-width:1100px;margin:auto}
+header{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:20px}.eyebrow,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold2);margin:0 0 5px}h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(29px,5vw,43px);margin:0;letter-spacing:-.02em}.sub{color:var(--muted);font-size:13px;margin:7px 0 0}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:transparent;color:var(--text);padding:10px 13px;border-radius:7px;cursor:pointer;font-weight:600}.btn:hover{border-color:var(--gold)}.btn.primary{background:var(--gold);color:var(--ink);border-color:var(--gold)}.btn.green{background:var(--green);border-color:var(--green)}.btn.danger{color:#ffd4d0}.btn.small{font-size:12px;padding:7px 9px}
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:18px 0}.stat{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:14px 15px;box-shadow:var(--shadow)}.stat .num{font:600 25px Georgia,serif;display:block}.stat .label{font:10px ui-monospace,monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);display:block;margin-top:3px}.stat.active .num{color:var(--green)}.stat.soon .num{color:var(--gold2)}.stat.expired .num{color:var(--red)}
+.toolbar{display:grid;grid-template-columns:1.5fr repeat(3,1fr);gap:8px;margin:18px 0}.control,input,select{width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);border-radius:7px;padding:10px 11px;font:13px Inter,system-ui}.control:focus,input:focus,select:focus{outline:2px solid var(--gold);outline-offset:1px}.toolbar label{display:block;font:10px ui-monospace,monospace;color:var(--muted);text-transform:uppercase;margin:0 0 5px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;margin:16px 0;display:none}.panel.open{display:block}.panel h2{font:600 19px Georgia,serif;margin:0 0 14px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.field.full{grid-column:1/-1}.field label{display:block;font:10px ui-monospace,monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 5px}.checkrow{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:10px}.checkrow label{display:flex;gap:7px;align-items:center;font-size:12px;color:var(--text)}.checkrow input{width:auto}.panel-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+.cards{display:flex;flex-direction:column;gap:12px}.ticket{display:grid;grid-template-columns:1fr auto;background:var(--paper);color:var(--ink);border-radius:10px;overflow:hidden;box-shadow:var(--shadow)}.ticket-main{padding:17px 18px}.ticket-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.brand{font:700 21px Georgia,serif;margin:0}.category{font:10px ui-monospace,monospace;text-transform:uppercase;color:#766d5d;margin-top:3px}.note{font-size:12px;color:#5a5346;margin:8px 0}.meta{display:flex;gap:24px;flex-wrap:wrap;margin-top:12px;font:11px ui-monospace,monospace;color:#6b6355}.meta strong{display:block;color:var(--ink);font-size:15px;margin-bottom:2px}.tag{font:600 10px ui-monospace,monospace;text-transform:uppercase;border:1.5px solid currentColor;padding:5px 8px;border-radius:4px;white-space:nowrap}.tag.active{color:var(--green)}.tag.soon{color:#9a7410}.tag.expired{color:var(--red)}.tag.redeemed{color:#6d7480}.stub{min-width:145px;border-left:2px dashed #c8bda3;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 12px;gap:7px}.count{font:11px ui-monospace,monospace;color:#5a5346;text-align:center}.card-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.empty{text-align:center;color:var(--muted);padding:55px 15px}.empty strong{display:block;font:20px Georgia,serif;color:var(--text);margin-bottom:5px}.status{font:11px ui-monospace,monospace;color:var(--muted);margin:8px 0 14px;min-height:14px}.hidden{display:none!important}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.62);display:none;align-items:center;justify-content:center;padding:16px;z-index:20}.modal.open{display:flex}.modal-card{max-width:430px;width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.4)}.modal-card h3{margin:0 0 8px;font:600 20px Georgia,serif}.modal-card p{color:var(--muted);font-size:13px}.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+@media(max-width:800px){.summary{grid-template-columns:repeat(2,1fr)}.toolbar{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr 1fr}}@media(max-width:560px){body{padding:16px 10px 50px}.toolbar,.grid{grid-template-columns:1fr}.ticket{grid-template-columns:1fr}.stub{border-left:0;border-top:2px dashed #c8bda3;min-width:0;flex-direction:row;justify-content:space-between}.ticket-top{align-items:flex-start}.actions{width:100%}.actions .btn{flex:1}.summary{gap:6px}.stat{padding:12px}.stat .num{font-size:21px}}
+
+/* PIN lock screen */
+#pinLock{
+  position:fixed; inset:0; z-index:9999;
+  display:none; align-items:center; justify-content:center;
+  background:var(--ink);
+  background-image:
+    radial-gradient(circle at 20% 10%, rgba(201,162,39,0.10), transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(63,125,88,0.10), transparent 40%);
+  padding:24px;
+}
+#pinLock.show{display:flex;}
+.pin-card{
+  width:min(390px,100%); background:var(--ink-2);
+  border:1px solid rgba(255,255,255,.10); border-radius:12px;
+  padding:28px 24px; text-align:center;
+  box-shadow:0 18px 60px rgba(0,0,0,.45);
+}
+.pin-card h2{font-family:'Fraunces',serif;font-size:28px;margin:0 0 8px;}
+.pin-card p{color:var(--slate-light);font-size:13px;margin:0 0 20px;line-height:1.5;}
+.pin-dots{display:flex;justify-content:center;gap:10px;margin:18px 0;}
+.pin-dot{width:12px;height:12px;border-radius:50%;border:1px solid var(--slate-light);}
+.pin-dot.filled{background:var(--gold);border-color:var(--gold);}
+.pin-input{
+  width:100%; text-align:center; letter-spacing:.45em; font-family:'IBM Plex Mono',monospace;
+  font-size:22px; padding:13px; background:var(--ink); color:var(--parchment);
+  border:1px solid rgba(255,255,255,.15); border-radius:6px;
+}
+.pin-error{min-height:20px;color:var(--coral);font-size:12px;margin-top:10px;}
+.pin-actions{display:flex;gap:10px;margin-top:14px;}
+.pin-actions button{flex:1;}
+.security-row{display:flex;justify-content:flex-end;gap:8px;margin-top:8px;}
+.lock-btn{
+  background:transparent;border:1px solid rgba(255,255,255,.16);color:var(--slate-light);
+  border-radius:4px;padding:8px 12px;cursor:pointer;font-size:12px;
+}
+.pin-settings{
+  margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08);
+  text-align:left;
+}
+.pin-settings summary{cursor:pointer;color:var(--gold-light);font-size:12px;font-family:'IBM Plex Mono',monospace;}
+.pin-settings .field{margin-top:12px;}
+.pin-small{font-size:11px;color:var(--slate-light);margin-top:8px;line-height:1.4;}
+
+</style>
+
+<meta name="theme-color" content="#1B2430">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Gift Card Vault">
+<link rel="manifest" href="manifest.json">
+
+</head>
+<body>
+
+<div id="pinLock" class="show">
+  <div class="pin-card">
+    <div class="eyebrow">Vault · Locked</div>
+    <h2>Gift Card Vault</h2>
+    <p id="pinMessage">Enter your PIN to unlock your gift cards.</p>
+    <div class="pin-dots" id="pinDots">
+      <span class="pin-dot"></span><span class="pin-dot"></span><span class="pin-dot"></span>
+      <span class="pin-dot"></span><span class="pin-dot"></span><span class="pin-dot"></span>
+    </div>
+    <input id="pinInput" class="pin-input" inputmode="numeric" pattern="[0-9]*"
+           maxlength="6" autocomplete="off" type="password" placeholder="••••">
+    <div id="pinError" class="pin-error"></div>
+    <div class="pin-actions">
+      <button class="btn-primary" id="unlockBtn">Unlock</button>
+    </div>
+    <div class="pin-settings">
+      <details>
+        <summary>Security settings</summary>
+        <div class="field">
+          <label for="newPin">Set / change PIN</label>
+          <input id="newPin" type="password" inputmode="numeric" pattern="[0-9]*"
+                 maxlength="6" placeholder="4–6 digits" autocomplete="new-password">
+        </div>
+        <div class="field">
+          <label for="confirmPin">Confirm PIN</label>
+          <input id="confirmPin" type="password" inputmode="numeric" pattern="[0-9]*"
+                 maxlength="6" placeholder="Repeat PIN" autocomplete="new-password">
+        </div>
+        <button class="btn-primary" id="savePinBtn" style="margin-top:12px;width:100%;">Save PIN</button>
+        <div class="pin-small">Your PIN is stored locally on this device. It is not uploaded to GitHub or any server.</div>
+      </details>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+<header><div><p class="eyebrow">Vault · 002</p><h1>Gift Card Vault</h1><p class="sub">Track balances, expiry dates and redemption — privately in your browser.</p></div><div class="actions"><button class="btn" id="exportBtn">Export CSV</button><button class="btn" id="importBtn">Import CSV</button><input id="importFile" type="file" accept=".csv" hidden><button class="btn primary" id="toggleForm">+ Add card</button></div></header>
+<div id="status" class="status" aria-live="polite"></div>
+<section class="summary"><div class="stat active"><span class="num" id="sumActive">₹0</span><span class="label">Current balance</span></div><div class="stat"><span class="num" id="sumCards">0</span><span class="label">Cards tracked</span></div><div class="stat soon"><span class="num" id="sumSoon">0</span><span class="label">Expiring soon</span></div><div class="stat expired"><span class="num" id="sumExpired">0</span><span class="label">Expired / redeemed</span></div></section>
+<div class="toolbar"><div><label for="search">Search</label><input id="search" placeholder="Brand, note, category…"></div><div><label for="filterStatus">Status</label><select id="filterStatus"><option value="all">All</option><option value="active">Active</option><option value="soon">Expiring soon</option><option value="expired">Expired</option><option value="redeemed">Redeemed</option></select></div><div><label for="filterCategory">Category</label><select id="filterCategory"><option value="all">All categories</option></select></div><div><label for="sort">Sort</label><select id="sort"><option value="expiry">Expiry soonest</option><option value="balance">Highest balance</option><option value="brand">Brand A–Z</option><option value="newest">Recently added</option></select></div></div>
+<section class="panel" id="formPanel"><h2 id="formTitle">New gift card</h2><input id="editId" type="hidden"><div class="grid"><div class="field"><label for="brand">Brand *</label><input id="brand" placeholder="Amazon, PVR, Flipkart…"></div><div class="field"><label for="amount">Original value *</label><input id="amount" type="number" min="0" step="0.01" placeholder="5000"></div><div class="field"><label for="balance">Current balance *</label><input id="balance" type="number" min="0" step="0.01" placeholder="5000"></div><div class="field"><label for="currency">Currency</label><select id="currency"><option>INR</option><option>USD</option><option>GBP</option><option>EUR</option><option>AED</option></select></div><div class="field"><label for="expiry">Expiry date *</label><input id="expiry" type="date"></div><div class="field"><label for="reminder">Remind before</label><select id="reminder"><option value="7">7 days</option><option value="14">14 days</option><option value="30" selected>30 days</option><option value="60">60 days</option><option value="90">90 days</option></select></div><div class="field"><label for="category">Category</label><select id="category"><option>Shopping</option><option>Dining</option><option>Entertainment</option><option>Travel</option><option>Fuel</option><option>Groceries</option><option>Beauty</option><option>Other</option></select></div><div class="field"><label for="location">Where stored</label><input id="location" placeholder="Wallet, email, app…"></div><div class="field full"><label for="note">Note</label><input id="note" placeholder="Optional card number hint, gift from, terms…"></div></div><div class="checkrow"><label><input type="checkbox" id="redeemed"> Mark as redeemed</label><label><input type="checkbox" id="notify"> Browser reminder when this page is open</label></div><div class="panel-actions"><button class="btn" id="cancelForm">Cancel</button><button class="btn green" id="saveCard">Save card</button></div></section>
+<div class="cards" id="cardsList"></div><div class="empty" id="emptyState"><strong>Nothing in the vault yet</strong><span>Add your first gift card to start tracking it.</span></div>
+</div>
+<div class="modal" id="redeemModal"><div class="modal-card"><h3>Redeem gift card</h3><p>Enter the amount used. The remaining balance will be saved automatically.</p><label class="mono" style="font-size:10px;color:var(--muted);text-transform:uppercase">Amount redeemed</label><input id="redeemAmount" type="number" min="0" step="0.01" style="margin-top:5px"><div class="modal-actions"><button class="btn" id="closeRedeem">Cancel</button><button class="btn green" id="confirmRedeem">Redeem</button></div></div></div>
+<script>
+const KEY_PREFIX='giftcard:'; let cards=[]; let redeemId=null;
+const $=id=>document.getElementById(id);
+function money(n,c='INR'){const sym={INR:'₹',USD:'$',GBP:'£',EUR:'€',AED:'د.إ'}[c]||c+' ';return sym+Number(n||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function daysUntil(s){const t=new Date();t.setHours(0,0,0,0);return Math.round((new Date(s+'T00:00:00')-t)/86400000)}
+function statusFor(c){if(c.redeemed||Number(c.balance)<=0)return 'redeemed';const d=daysUntil(c.expiry);if(d<0)return 'expired';if(d<=Number(c.reminderDays||30))return 'soon';return 'active'}
+function countdown(c){const d=daysUntil(c.expiry);if(c.redeemed)return 'Fully redeemed';if(Number(c.balance)<=0)return '₹0 remaining';if(d<0)return 'Expired '+Math.abs(d)+'d ago';if(d===0)return 'Expires today';return d+' day'+(d===1?'':'s')+' left'}
+function dateFmt(s){return new Date(s+'T00:00:00').toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'})}
+function esc(s){const d=document.createElement('div');d.textContent=s??'';return d.innerHTML}
+async function storageSet(k,v){try{if(window.storage&&window.storage.set){await window.storage.set(k,v);return}}catch(e){}localStorage.setItem(k,v)}
+async function storageGet(k){try{if(window.storage&&window.storage.get){const r=await window.storage.get(k);return r?.value??null}}catch(e){}return localStorage.getItem(k)}
+async function storageList(){try{if(window.storage&&window.storage.list){const r=await window.storage.list(KEY_PREFIX);if(Array.isArray(r?.keys))return r.keys.map(x=>typeof x==='string'?x:x.key).filter(Boolean)}}catch(e){}return Object.keys(localStorage).filter(k=>k.startsWith(KEY_PREFIX))}
+async function storageDelete(k){try{if(window.storage&&window.storage.delete){await window.storage.delete(k);return}}catch(e){}localStorage.removeItem(k)}
+async function load(){cards=[];for(const k of await storageList()){try{const v=await storageGet(k);if(v)cards.push(JSON.parse(v))}catch(e){}}render()}
+async function persist(c){await storageSet(KEY_PREFIX+c.id,JSON.stringify(c))}
+function reset(){['brand','amount','balance','expiry','location','note'].forEach(x=>$(x).value='');$('currency').value='INR';$('reminder').value='30';$('category').value='Shopping';$('redeemed').checked=false;$('notify').checked=false;$('editId').value='';$('formTitle').textContent='New gift card'}
+function openNew(){reset();$('formPanel').classList.add('open');$('brand').focus()}
+function openEdit(c){$('editId').value=c.id;$('brand').value=c.brand;$('amount').value=c.amount;$('balance').value=c.balance;$('currency').value=c.currency||'INR';$('expiry').value=c.expiry;$('reminder').value=c.reminderDays||30;$('category').value=c.category||'Other';$('location').value=c.location||'';$('note').value=c.note||'';$('redeemed').checked=!!c.redeemed;$('notify').checked=c.notify!==false;$('formTitle').textContent='Edit gift card';$('formPanel').classList.add('open');$('brand').focus()}
+function filtered(){const q=$('search').value.trim().toLowerCase(), fs=$('filterStatus').value, fc=$('filterCategory').value, sort=$('sort').value;let a=cards.filter(c=>{const st=statusFor(c);const hay=[c.brand,c.note,c.category,c.location].join(' ').toLowerCase();return(!q||hay.includes(q))&&(fs==='all'||st===fs)&&(fc==='all'||(c.category||'Other')===fc)});a.sort((x,y)=>sort==='balance'?Number(y.balance)-Number(x.balance):sort==='brand'?x.brand.localeCompare(y.brand):sort==='newest'?Number(y.createdAt)-Number(x.createdAt):daysUntil(x.expiry)-daysUntil(y.expiry));return a}
+function render(){const list=$('cardsList'),a=filtered();list.innerHTML='';$('emptyState').classList.toggle('hidden',a.length>0);a.forEach(c=>{const st=statusFor(c);const el=document.createElement('article');el.className='ticket';el.innerHTML=`<div class="ticket-main"><div class="ticket-top"><div><h2 class="brand">${esc(c.brand)}</h2><div class="category">${esc(c.category||'Other')} · ${esc(c.location||'No storage note')}</div></div><span class="tag ${st}">${st==='active'?'Active':st==='soon'?'Expiring soon':st==='expired'?'Expired':'Redeemed'}</span></div>${c.note?`<p class="note">${esc(c.note)}</p>`:''}<div class="meta"><div><strong>${money(c.balance,c.currency)}</strong>balance</div><div><strong>${money(c.amount,c.currency)}</strong>original</div><div><strong>${dateFmt(c.expiry)}</strong>expires</div></div><div class="card-actions"><button class="btn small" data-action="edit" data-id="${c.id}">Edit</button><button class="btn small" data-action="redeem" data-id="${c.id}" ${st==='redeemed'?'disabled':''}>Redeem</button><button class="btn small danger" data-action="delete" data-id="${c.id}">Remove</button></div></div><div class="stub"><span class="count">${countdown(c)}</span></div>`;list.appendChild(el)});updateSummary();updateCategories()}
+function updateSummary(){const active=cards.filter(c=>statusFor(c)!=='redeemed'&&statusFor(c)!=='expired').reduce((s,c)=>s+Number(c.balance),0);$('sumActive').textContent=money(active,'INR');$('sumCards').textContent=cards.length;$('sumSoon').textContent=cards.filter(c=>statusFor(c)==='soon').length;$('sumExpired').textContent=cards.filter(c=>['expired','redeemed'].includes(statusFor(c))).length}
+function updateCategories(){const current=$('filterCategory').value;const cats=[...new Set(cards.map(c=>c.category||'Other'))].sort();$('filterCategory').innerHTML='<option value="all">All categories</option>'+cats.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');$('filterCategory').value=cats.includes(current)?current:'all'}
+function notifySoon(){if(!('Notification' in window)||Notification.permission!=='granted')return;cards.filter(c=>c.notify!==false&&statusFor(c)==='soon').forEach(c=>{new Notification('Gift Card Vault',{body:`${c.brand}: ${money(c.balance,c.currency)} remaining · ${countdown(c)}`})})}
+async function saveFromForm(){const brand=$('brand').value.trim(),amount=Number($('amount').value),balance=Number($('balance').value),expiry=$('expiry').value;if(!brand||!Number.isFinite(amount)||!Number.isFinite(balance)||!expiry||amount<0||balance<0){alert('Please fill in brand, original value, current balance and expiry date.');return}if(balance>amount){if(!confirm('Current balance is higher than original value. Save anyway?'))return}const id=$('editId').value||Date.now().toString(36)+Math.random().toString(36).slice(2,7);const old=cards.find(c=>c.id===id);const c={id,brand,amount,balance:Math.min(balance,999999999),currency:$('currency').value,expiry,reminderDays:Number($('reminder').value),category:$('category').value,location:$('location').value.trim(),note:$('note').value.trim(),redeemed:$('redeemed').checked||balance<=0,notify:$('notify').checked,createdAt:old?.createdAt||Date.now(),updatedAt:Date.now()};if(old)cards=cards.map(x=>x.id===id?c:x);else cards.push(c);await persist(c);$('formPanel').classList.remove('open');reset();render();setStatus(old?'Card updated.':'Card added.') ;if(c.notify&&'Notification' in window&&Notification.permission==='default')Notification.requestPermission()}
+function setStatus(t){$('status').textContent=t;setTimeout(()=>{if($('status').textContent===t)$('status').textContent=''},3500)}
+function csvEscape(v){const s=String(v??'');return /[",\n]/.test(s)?'"'+s.replaceAll('"','""')+'"':s}
+function toCSV(){const h=['id','brand','amount','balance','currency','expiry','reminderDays','category','location','note','redeemed','notify','createdAt'];return [h.join(','),...cards.map(c=>h.map(k=>csvEscape(c[k])).join(','))].join('\n')}
+function parseLine(line){const r=[];let s='',q=false;for(let i=0;i<line.length;i++){const ch=line[i];if(q){if(ch==='"'&&line[i+1]==='"'){s+='"';i++}else if(ch==='"')q=false;else s+=ch}else if(ch==='"')q=true;else if(ch===','){r.push(s);s=''}else s+=ch}r.push(s);return r}
+function parseCSV(text){const lines=text.split(/\r?\n/).filter(x=>x.trim());if(lines.length<2)return[];const h=parseLine(lines[0]);return lines.slice(1).map(line=>{const v=parseLine(line),o={};h.forEach((k,i)=>o[k]=v[i]??'');if(!o.brand||!o.expiry)return null;o.id=o.id||Date.now().toString(36)+Math.random().toString(36).slice(2,7);o.amount=Number(o.amount)||0;o.balance=o.balance===''?o.amount:Number(o.balance)||0;o.reminderDays=Number(o.reminderDays)||30;o.redeemed=o.redeemed==='true'||o.balance<=0;o.notify=o.notify!=='false';o.createdAt=Number(o.createdAt)||Date.now();o.currency=o.currency||'INR';o.category=o.category||'Other';return o}).filter(Boolean)}
+$('toggleForm').onclick=openNew;$('cancelForm').onclick=()=>{$('formPanel').classList.remove('open');reset()};$('saveCard').onclick=saveFromForm;
+['search','filterStatus','filterCategory','sort'].forEach(id=>$(id).addEventListener('input',render));
+$('cardsList').addEventListener('click',async e=>{const b=e.target.closest('button[data-action]');if(!b)return;const c=cards.find(x=>x.id===b.dataset.id);if(!c)return;if(b.dataset.action==='edit')openEdit(c);if(b.dataset.action==='redeem'){redeemId=c.id;$('redeemAmount').value='';$('redeemModal').classList.add('open');$('redeemAmount').focus()}if(b.dataset.action==='delete'){if(confirm(`Remove ${c.brand} from the vault?`)){await storageDelete(KEY_PREFIX+c.id);cards=cards.filter(x=>x.id!==c.id);render();setStatus('Card removed.')}}});
+$('closeRedeem').onclick=()=>{$('redeemModal').classList.remove('open');redeemId=null};$('confirmRedeem').onclick=async()=>{const c=cards.find(x=>x.id===redeemId),amt=Number($('redeemAmount').value);if(!c||!amt||amt<=0)return;if(amt>Number(c.balance)){alert('Redeemed amount cannot exceed current balance.');return}c.balance=Number((Number(c.balance)-amt).toFixed(2));if(c.balance===0)c.redeemed=true;c.updatedAt=Date.now();await persist(c);$('redeemModal').classList.remove('open');redeemId=null;render();setStatus('Redemption saved.')};
+$('exportBtn').onclick=()=>{const blob=new Blob([toCSV()],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='gift-card-vault-backup-'+new Date().toISOString().slice(0,10)+'.csv';a.click();URL.revokeObjectURL(url);setStatus('Backup exported.')};$('importBtn').onclick=()=>$('importFile').click();$('importFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;const imported=parseCSV(await f.text());if(!imported.length){setStatus('No valid rows found in that file.');return}for(const c of imported){cards.push(c);await persist(c)}render();setStatus(`Imported ${imported.length} card${imported.length===1?'':'s'}.`);e.target.value=''};
+$('notify').addEventListener('change',e=>{if(e.target.checked&&'Notification'in window&&Notification.permission==='default')Notification.requestPermission()});setInterval(notifySoon,3600000);load().then(()=>setTimeout(notifySoon,800));
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+</script>
+
+</body></html>
