@@ -106,7 +106,7 @@ header{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;
 </div>
 
 <div class="wrap">
-<header><div><p class="eyebrow">Vault · 002</p><h1>Gift Card Vault</h1><p class="sub">Track balances, expiry dates and redemption — privately in your browser.</p></div><div class="actions"><button class="btn" id="exportBtn">Export CSV</button><button class="btn" id="importBtn">Import CSV</button><input id="importFile" type="file" accept=".csv" hidden><button class="btn primary" id="toggleForm">+ Add card</button></div></header>
+<header><div><p class="eyebrow">Vault · 002</p><h1>Gift Card Vault</h1><p class="sub">Track balances, expiry dates and redemption — privately in your browser.</p></div><div class="actions"><button class="btn" id="exportBtn">Export CSV</button><button class="btn" id="importBtn">Import CSV</button><input id="importFile" type="file" accept=".csv" hidden><button class="btn primary" id="toggleForm">+ Add card</button><button class="btn" id="lockBtn">Lock</button></div></header>
 <div id="status" class="status" aria-live="polite"></div>
 <section class="summary"><div class="stat active"><span class="num" id="sumActive">₹0</span><span class="label">Current balance</span></div><div class="stat"><span class="num" id="sumCards">0</span><span class="label">Cards tracked</span></div><div class="stat soon"><span class="num" id="sumSoon">0</span><span class="label">Expiring soon</span></div><div class="stat expired"><span class="num" id="sumExpired">0</span><span class="label">Expired / redeemed</span></div></section>
 <div class="toolbar"><div><label for="search">Search</label><input id="search" placeholder="Brand, note, category…"></div><div><label for="filterStatus">Status</label><select id="filterStatus"><option value="all">All</option><option value="active">Active</option><option value="soon">Expiring soon</option><option value="expired">Expired</option><option value="redeemed">Redeemed</option></select></div><div><label for="filterCategory">Category</label><select id="filterCategory"><option value="all">All categories</option></select></div><div><label for="sort">Sort</label><select id="sort"><option value="expiry">Expiry soonest</option><option value="balance">Highest balance</option><option value="brand">Brand A–Z</option><option value="newest">Recently added</option></select></div></div>
@@ -157,6 +157,44 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(() => {});
   });
 }
+</script>
+
+
+<script>
+(function(){
+  const PIN_KEY='giftCardVault.pin.v1';
+  const $=id=>document.getElementById(id);
+  function hashPin(pin){let h=2166136261;for(let i=0;i<pin.length;i++){h^=pin.charCodeAt(i);h=Math.imul(h,16777619);}return (h>>>0).toString(16);}
+  function stored(){return localStorage.getItem(PIN_KEY);}
+  function dots(){const n=$('pinInput').value.length;document.querySelectorAll('#pinDots .pin-dot').forEach((d,i)=>d.classList.toggle('filled',i<n));}
+  function lock(msg){
+    $('pinLock').classList.add('show'); $('pinInput').value=''; dots();
+    $('pinMessage').textContent=msg||'Enter your PIN to unlock your gift cards.';
+    $('pinError').textContent='';
+    setTimeout(()=>$('pinInput').focus(),80);
+  }
+  function unlock(){
+    const pin=$('pinInput').value;
+    if(!stored()){$('pinError').textContent='Set a PIN first in Security settings.';return;}
+    if(hashPin(pin)===stored()){$('pinLock').classList.remove('show');$('pinInput').value='';dots();$('pinError').textContent='';}
+    else{$('pinError').textContent='Incorrect PIN.';$('pinInput').value='';dots();}
+  }
+  function savePin(){
+    const a=$('newPin').value.trim(), b=$('confirmPin').value.trim();
+    if(!/^\d{4,6}$/.test(a)){$('pinError').textContent='PIN must be 4–6 digits.';return;}
+    if(a!==b){$('pinError').textContent='PINs do not match.';return;}
+    localStorage.setItem(PIN_KEY,hashPin(a));
+    $('newPin').value='';$('confirmPin').value='';
+    lock('PIN saved. Enter your new PIN to unlock.');
+  }
+  $('pinInput').addEventListener('input',dots);
+  $('pinInput').addEventListener('keydown',e=>{if(e.key==='Enter')unlock();});
+  $('unlockBtn').addEventListener('click',unlock);
+  $('savePinBtn').addEventListener('click',savePin);
+  $('lockBtn').addEventListener('click',()=>{if(stored())lock('Your vault is locked. Enter your PIN to continue.');});
+  if(stored()) lock();
+  else {$('pinMessage').textContent='Set a 4–6 digit PIN below to protect your vault.';$('pinLock').classList.add('show');}
+})();
 </script>
 
 </body></html>
