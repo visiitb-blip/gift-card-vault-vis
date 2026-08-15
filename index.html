@@ -16,48 +16,6 @@ header{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.62);display:none;align-items:center;justify-content:center;padding:16px;z-index:20}.modal.open{display:flex}.modal-card{max-width:430px;width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.4)}.modal-card h3{margin:0 0 8px;font:600 20px Georgia,serif}.modal-card p{color:var(--muted);font-size:13px}.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
 @media(max-width:800px){.summary{grid-template-columns:repeat(2,1fr)}.toolbar{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr 1fr}}@media(max-width:560px){body{padding:16px 10px 50px}.toolbar,.grid{grid-template-columns:1fr}.ticket{grid-template-columns:1fr}.stub{border-left:0;border-top:2px dashed #c8bda3;min-width:0;flex-direction:row;justify-content:space-between}.ticket-top{align-items:flex-start}.actions{width:100%}.actions .btn{flex:1}.summary{gap:6px}.stat{padding:12px}.stat .num{font-size:21px}}
 
-/* PIN lock screen */
-#pinLock{
-  position:fixed; inset:0; z-index:9999;
-  display:none; align-items:center; justify-content:center;
-  background:var(--ink);
-  background-image:
-    radial-gradient(circle at 20% 10%, rgba(201,162,39,0.10), transparent 40%),
-    radial-gradient(circle at 85% 80%, rgba(63,125,88,0.10), transparent 40%);
-  padding:24px;
-}
-#pinLock.show{display:flex;}
-.pin-card{
-  width:min(390px,100%); background:var(--ink-2);
-  border:1px solid rgba(255,255,255,.10); border-radius:12px;
-  padding:28px 24px; text-align:center;
-  box-shadow:0 18px 60px rgba(0,0,0,.45);
-}
-.pin-card h2{font-family:'Fraunces',serif;font-size:28px;margin:0 0 8px;}
-.pin-card p{color:var(--slate-light);font-size:13px;margin:0 0 20px;line-height:1.5;}
-.pin-dots{display:flex;justify-content:center;gap:10px;margin:18px 0;}
-.pin-dot{width:12px;height:12px;border-radius:50%;border:1px solid var(--slate-light);}
-.pin-dot.filled{background:var(--gold);border-color:var(--gold);}
-.pin-input{
-  width:100%; text-align:center; letter-spacing:.45em; font-family:'IBM Plex Mono',monospace;
-  font-size:22px; padding:13px; background:var(--ink); color:var(--parchment);
-  border:1px solid rgba(255,255,255,.15); border-radius:6px;
-}
-.pin-error{min-height:20px;color:var(--coral);font-size:12px;margin-top:10px;}
-.pin-actions{display:flex;gap:10px;margin-top:14px;}
-.pin-actions button{flex:1;}
-.security-row{display:flex;justify-content:flex-end;gap:8px;margin-top:8px;}
-.lock-btn{
-  background:transparent;border:1px solid rgba(255,255,255,.16);color:var(--slate-light);
-  border-radius:4px;padding:8px 12px;cursor:pointer;font-size:12px;
-}
-.pin-settings{
-  margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08);
-  text-align:left;
-}
-.pin-settings summary{cursor:pointer;color:var(--gold-light);font-size:12px;font-family:'IBM Plex Mono',monospace;}
-.pin-settings .field{margin-top:12px;}
-.pin-small{font-size:11px;color:var(--slate-light);margin-top:8px;line-height:1.4;}
 
 </style>
 
@@ -70,43 +28,8 @@ header{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;
 </head>
 <body>
 
-<div id="pinLock" class="show">
-  <div class="pin-card">
-    <div class="eyebrow">Vault · Locked</div>
-    <h2>Gift Card Vault</h2>
-    <p id="pinMessage">Enter your PIN to unlock your gift cards.</p>
-    <div class="pin-dots" id="pinDots">
-      <span class="pin-dot"></span><span class="pin-dot"></span><span class="pin-dot"></span>
-      <span class="pin-dot"></span><span class="pin-dot"></span><span class="pin-dot"></span>
-    </div>
-    <input id="pinInput" class="pin-input" inputmode="numeric" pattern="[0-9]*"
-           maxlength="6" autocomplete="off" type="password" placeholder="••••">
-    <div id="pinError" class="pin-error"></div>
-    <div class="pin-actions">
-      <button class="btn-primary" id="unlockBtn">Unlock</button>
-    </div>
-    <div class="pin-settings">
-      <details>
-        <summary>Security settings</summary>
-        <div class="field">
-          <label for="newPin">Set / change PIN</label>
-          <input id="newPin" type="password" inputmode="numeric" pattern="[0-9]*"
-                 maxlength="6" placeholder="4–6 digits" autocomplete="new-password">
-        </div>
-        <div class="field">
-          <label for="confirmPin">Confirm PIN</label>
-          <input id="confirmPin" type="password" inputmode="numeric" pattern="[0-9]*"
-                 maxlength="6" placeholder="Repeat PIN" autocomplete="new-password">
-        </div>
-        <button class="btn-primary" id="savePinBtn" style="margin-top:12px;width:100%;">Save PIN</button>
-        <div class="pin-small">Your PIN is stored locally on this device. It is not uploaded to GitHub or any server.</div>
-      </details>
-    </div>
-  </div>
-</div>
-
 <div class="wrap">
-<header><div><p class="eyebrow">Vault · 002</p><h1>Gift Card Vault</h1><p class="sub">Track balances, expiry dates and redemption — privately in your browser.</p></div><div class="actions"><button class="btn" id="exportBtn">Export CSV</button><button class="btn" id="importBtn">Import CSV</button><input id="importFile" type="file" accept=".csv" hidden><button class="btn primary" id="toggleForm">+ Add card</button><button class="btn" id="lockBtn">Lock</button></div></header>
+<header><div><p class="eyebrow">Vault · 002</p><h1>Gift Card Vault</h1><p class="sub">Track balances, expiry dates and redemption — privately in your browser.</p></div><div class="actions"><button class="btn" id="exportBtn">Export CSV</button><button class="btn" id="importBtn">Import CSV</button><input id="importFile" type="file" accept=".csv" hidden><button class="btn primary" id="toggleForm">+ Add card</button></div></header>
 <div id="status" class="status" aria-live="polite"></div>
 <section class="summary"><div class="stat active"><span class="num" id="sumActive">₹0</span><span class="label">Current balance</span></div><div class="stat"><span class="num" id="sumCards">0</span><span class="label">Cards tracked</span></div><div class="stat soon"><span class="num" id="sumSoon">0</span><span class="label">Expiring soon</span></div><div class="stat expired"><span class="num" id="sumExpired">0</span><span class="label">Expired / redeemed</span></div></section>
 <div class="toolbar"><div><label for="search">Search</label><input id="search" placeholder="Brand, note, category…"></div><div><label for="filterStatus">Status</label><select id="filterStatus"><option value="all">All</option><option value="active">Active</option><option value="soon">Expiring soon</option><option value="expired">Expired</option><option value="redeemed">Redeemed</option></select></div><div><label for="filterCategory">Category</label><select id="filterCategory"><option value="all">All categories</option></select></div><div><label for="sort">Sort</label><select id="sort"><option value="expiry">Expiry soonest</option><option value="balance">Highest balance</option><option value="brand">Brand A–Z</option><option value="newest">Recently added</option></select></div></div>
@@ -160,41 +83,6 @@ if ('serviceWorker' in navigator) {
 </script>
 
 
-<script>
-(function(){
-  const PIN_KEY='giftCardVault.pin.v1';
-  const $=id=>document.getElementById(id);
-  function hashPin(pin){let h=2166136261;for(let i=0;i<pin.length;i++){h^=pin.charCodeAt(i);h=Math.imul(h,16777619);}return (h>>>0).toString(16);}
-  function stored(){return localStorage.getItem(PIN_KEY);}
-  function dots(){const n=$('pinInput').value.length;document.querySelectorAll('#pinDots .pin-dot').forEach((d,i)=>d.classList.toggle('filled',i<n));}
-  function lock(msg){
-    $('pinLock').classList.add('show'); $('pinInput').value=''; dots();
-    $('pinMessage').textContent=msg||'Enter your PIN to unlock your gift cards.';
-    $('pinError').textContent='';
-    setTimeout(()=>$('pinInput').focus(),80);
-  }
-  function unlock(){
-    const pin=$('pinInput').value;
-    if(!stored()){$('pinError').textContent='Set a PIN first in Security settings.';return;}
-    if(hashPin(pin)===stored()){$('pinLock').classList.remove('show');$('pinInput').value='';dots();$('pinError').textContent='';}
-    else{$('pinError').textContent='Incorrect PIN.';$('pinInput').value='';dots();}
-  }
-  function savePin(){
-    const a=$('newPin').value.trim(), b=$('confirmPin').value.trim();
-    if(!/^\d{4,6}$/.test(a)){$('pinError').textContent='PIN must be 4–6 digits.';return;}
-    if(a!==b){$('pinError').textContent='PINs do not match.';return;}
-    localStorage.setItem(PIN_KEY,hashPin(a));
-    $('newPin').value='';$('confirmPin').value='';
-    lock('PIN saved. Enter your new PIN to unlock.');
-  }
-  $('pinInput').addEventListener('input',dots);
-  $('pinInput').addEventListener('keydown',e=>{if(e.key==='Enter')unlock();});
-  $('unlockBtn').addEventListener('click',unlock);
-  $('savePinBtn').addEventListener('click',savePin);
-  $('lockBtn').addEventListener('click',()=>{if(stored())lock('Your vault is locked. Enter your PIN to continue.');});
-  if(stored()) lock();
-  else {$('pinMessage').textContent='Set a 4–6 digit PIN below to protect your vault.';$('pinLock').classList.add('show');}
-})();
-</script>
+
 
 </body></html>
